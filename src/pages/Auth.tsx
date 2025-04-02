@@ -15,6 +15,7 @@ const Auth = () => {
     <AuthLayout 
       title={isSignIn ? "Welcome Back" : "Create Account"} 
       subtitle={isSignIn ? "Sign in to access your account" : "Sign up to get started"}
+      tagline="Banking on Success: Ace JAIIB & CAIIB with Confidence!"
     >
       {isSignIn ? (
         <SignInForm onToggleForm={toggleForm} />
