@@ -5,6 +5,7 @@ import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
+import SocialAuth from './SocialAuth';
 
 interface SignUpFormProps {
   onToggleForm: () => void;
@@ -173,6 +174,8 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
       >
         {isLoading ? "Signing up..." : "Sign Up"}
       </Button>
+      
+      <SocialAuth isLoading={isLoading} setIsLoading={setIsLoading} />
       
       <div className="text-center mt-6">
         <p className="text-sm text-muted-foreground">
