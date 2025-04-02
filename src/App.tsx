@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Options from "./pages/Options";
+import Jaiib from "./pages/Jaiib";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,7 +23,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/options" element={<Options />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/jaiib" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/jaiib" element={<Jaiib />} />
           <Route path="/caiib" element={<Navigate to="/dashboard" replace />} />
           <Route path="/profile" element={<Navigate to="/dashboard" replace />} />
           <Route path="*" element={<NotFound />} />
