@@ -28,8 +28,8 @@ const SocialAuth = ({ isLoading, setIsLoading }: SocialAuthProps) => {
         description: "You have signed in with Google successfully.",
       });
       
-      // Redirect to dashboard after successful login
-      navigate('/dashboard');
+      // Redirect to options page after successful login
+      navigate('/options');
     } catch (error) {
       toast({
         variant: "destructive",

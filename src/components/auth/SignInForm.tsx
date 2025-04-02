@@ -59,8 +59,8 @@ const SignInForm = ({ onToggleForm }: SignInFormProps) => {
         description: "You have signed in successfully.",
       });
       
-      // Redirect to dashboard after successful login
-      navigate('/dashboard');
+      // Redirect to options page after successful login
+      navigate('/options');
     } catch (error) {
       toast({
         variant: "destructive",

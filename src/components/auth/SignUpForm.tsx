@@ -72,8 +72,8 @@ const SignUpForm = ({ onToggleForm }: SignUpFormProps) => {
         description: "You have successfully signed up.",
       });
       
-      // Redirect to dashboard after successful registration
-      navigate('/dashboard');
+      // Redirect to options page after successful registration
+      navigate('/options');
     } catch (error) {
       toast({
         variant: "destructive",
