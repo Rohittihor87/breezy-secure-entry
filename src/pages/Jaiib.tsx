@@ -12,7 +12,7 @@ const Jaiib = () => {
   const handleSubjectSelect = (subject: string) => {
     setLoading(true);
     console.log(`Selected subject: ${subject}`);
-    // In a real app, we would navigate to the specific subject page
+    // Navigate to the appropriate subject page
     setTimeout(() => {
       navigate(`/jaiib/${subject.toLowerCase().replace(/\s+/g, '-')}`);
       setLoading(false);
@@ -25,24 +25,28 @@ const Jaiib = () => {
       title: 'Indian Economy & Indian Financial System',
       description: 'Understanding macroeconomic concepts and financial markets in India',
       icon: BookOpen,
+      route: 'indian-economy'
     },
     {
       id: 'principles-of-banking',
       title: 'Principles & Practices of Banking',
       description: 'Core banking operations, regulations, and risk management',
       icon: BookText,
+      route: 'principles-banking'
     },
     {
       id: 'accounting',
       title: 'Accounting & Financial Management for Bankers',
       description: 'Banking accounting principles and financial analysis',
       icon: FileText,
+      route: 'accounting-financial'
     },
     {
       id: 'retail-banking',
       title: 'Retail Banking & Wealth Management',
       description: 'Customer-oriented banking services and wealth management products',
       icon: Banknote,
+      route: 'retail-banking'
     },
   ];
 
@@ -60,7 +64,7 @@ const Jaiib = () => {
             <Card 
               key={subject.id}
               className="border-none shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer" 
-              onClick={() => handleSubjectSelect(subject.id)}
+              onClick={() => handleSubjectSelect(subject.route)}
             >
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">

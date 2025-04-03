@@ -12,6 +12,12 @@ import Caiib from "./pages/Caiib";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
+// Import new JAIIB subject pages
+import IndianEconomy from "./pages/jaiib/IndianEconomy";
+import PrinciplesBanking from "./pages/jaiib/PrinciplesBanking";
+import AccountingFinancial from "./pages/jaiib/AccountingFinancial";
+import RetailBanking from "./pages/jaiib/RetailBanking";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -28,6 +34,13 @@ const App = () => (
           <Route path="/jaiib" element={<Jaiib />} />
           <Route path="/caiib" element={<Caiib />} />
           <Route path="/profile" element={<Profile />} />
+          
+          {/* JAIIB Subject Routes */}
+          <Route path="/jaiib/indian-economy" element={<IndianEconomy />} />
+          <Route path="/jaiib/principles-banking" element={<PrinciplesBanking />} />
+          <Route path="/jaiib/accounting-financial" element={<AccountingFinancial />} />
+          <Route path="/jaiib/retail-banking" element={<RetailBanking />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
