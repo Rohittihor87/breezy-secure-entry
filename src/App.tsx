@@ -8,6 +8,8 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import Options from "./pages/Options";
 import Jaiib from "./pages/Jaiib";
+import Caiib from "./pages/Caiib";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,8 +26,8 @@ const App = () => (
           <Route path="/options" element={<Options />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/jaiib" element={<Jaiib />} />
-          <Route path="/caiib" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/profile" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/caiib" element={<Caiib />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
