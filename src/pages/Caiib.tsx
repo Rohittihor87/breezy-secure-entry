@@ -23,28 +23,28 @@ const Caiib = () => {
     {
       id: 'advanced-bank-management',
       title: 'Advanced Bank Management (ABM)',
-      description: 'Advanced banking operations, risk management, and HR practices',
+      description: 'Statistics, HRM in banks, credit management, and corporate governance',
       icon: BookOpen,
       route: 'advanced-bank-management'
     },
     {
       id: 'bank-financial-management',
       title: 'Bank Financial Management (BFM)',
-      description: 'Financial analysis, treasury management, and international banking',
+      description: 'International banking, risk management, treasury, and balance sheet management',
       icon: BookText,
       route: 'bank-financial-management'
     },
     {
       id: 'advanced-business-financial',
       title: 'Advanced Business & Financial Management (ABFM)',
-      description: 'Complex financial products, corporate finance, and investment banking',
+      description: 'Management accounting, financial management, and strategic management',
       icon: FileText,
       route: 'advanced-business-financial'
     },
     {
       id: 'banking-regulations',
       title: 'Banking Regulations and Business Laws (BRBL)',
-      description: 'Legal framework, compliance, and regulatory requirements for banks',
+      description: 'Banking regulations, securities laws, and commercial laws related to banking',
       icon: ScrollText,
       route: 'banking-regulations'
     },

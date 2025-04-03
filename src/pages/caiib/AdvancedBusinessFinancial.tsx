@@ -1,146 +1,145 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Book, ArrowLeft, Clock } from 'lucide-react';
+import { FileText, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 
 const AdvancedBusinessFinancial = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<string>('module-a');
-
+  const [activeTab, setActiveTab] = useState('module-a');
+  
   const modules = [
     {
       id: 'module-a',
-      title: 'Module A: The Fundamentals of Management Accounting',
+      title: 'Module A',
+      name: 'The Fundamentals of Management Accounting',
       chapters: [
         'Cost Concepts and Break-even Analysis',
         'Budgeting and Forecasting',
         'Variance Analysis',
         'Activity-Based Costing',
-        'Marginal Costing and Decision-Making',
-      ],
+        'Marginal Costing and Decision-Making'
+      ]
     },
     {
       id: 'module-b',
-      title: 'Module B: Financial Management',
+      title: 'Module B',
+      name: 'Financial Management',
       chapters: [
         'Capital Structure and Theories',
         'Cost of Capital and Leverage',
         'Capital Budgeting and Investment Decisions',
         'Dividend Policy and Working Capital Management',
-        'Financial Ratios and Analysis',
-      ],
+        'Financial Ratios and Analysis'
+      ]
     },
     {
       id: 'module-c',
-      title: 'Module C: Strategic Management',
+      title: 'Module C',
+      name: 'Strategic Management',
       chapters: [
         'Strategic Planning and Decision Making',
         'Competitive Strategies in Banking',
         'Business Process Reengineering (BPR)',
         'Mergers and Acquisitions in Banking',
-        'Strategic Leadership and Change Management',
-      ],
+        'Strategic Leadership and Change Management'
+      ]
     },
     {
       id: 'module-d',
-      title: 'Module D: Management of Capital and Project Finance',
+      title: 'Module D',
+      name: 'Management of Capital and Project Finance',
       chapters: [
         'Project Finance – Concept and Structure',
         'Risk Analysis in Project Finance',
         'Infrastructure Financing',
         'Venture Capital and Private Equity',
-        'Securitization and Factoring',
-      ],
-    },
+        'Securitization and Factoring'
+      ]
+    }
   ];
 
-  const handleQuizStart = (moduleName: string, chapterName: string) => {
-    console.log(`Starting quiz for ${moduleName} - ${chapterName}`);
-    // We would navigate to the quiz page here in a real implementation
-    // navigate(`/caiib/advanced-business-financial/quiz/${moduleName}/${chapterName}`);
+  const handleStartQuiz = (moduleId: string, chapterIndex: number) => {
+    const chapter = modules.find(m => m.id === moduleId)?.chapters[chapterIndex];
+    console.log(`Starting quiz for ${moduleId}, Chapter: ${chapter}`);
+    // In a real app, we would navigate to the quiz page
+    // navigate(`/caiib/advanced-business-financial/${moduleId}/quiz/${chapterIndex}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-primary/10 to-primary/5 p-4 sm:p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="mb-6 flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate('/caiib')} className="flex items-center gap-2">
-            <ArrowLeft size={16} />
-            <span>Back to CAIIB</span>
+    <div className="min-h-screen w-full bg-auth-gradient p-4 animate-fade-in">
+      <div className="max-w-7xl mx-auto">
+        <div className="mb-8 flex items-center">
+          <Button 
+            variant="ghost" 
+            onClick={() => navigate('/caiib')}
+            className="bg-white/10 text-white hover:bg-white/20 mr-4"
+          >
+            <ArrowLeft className="mr-2" size={16} />
+            Back
           </Button>
-        </div>
-
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold mb-2">Advanced Business & Financial Management (ABFM)</h1>
-          <p className="text-muted-foreground">CAIIB - Certified Associate of the Indian Institute of Bankers</p>
-        </div>
-
-        <Tabs defaultValue="module-a" onValueChange={setActiveTab} className="w-full">
-          <div className="mb-6 overflow-x-auto">
-            <TabsList className="w-full justify-start">
-              {modules.map((module) => (
-                <TabsTrigger 
-                  key={module.id} 
-                  value={module.id} 
-                  className="text-xs sm:text-sm md:text-base px-2 sm:px-4 py-2"
-                >
-                  {module.title.split(':')[0]}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+          <div>
+            <h1 className="text-3xl font-bold text-white">Advanced Business & Financial Management (ABFM)</h1>
+            <p className="text-xl text-auth-light">CAIIB Exam Preparation</p>
           </div>
-
-          {modules.map((module) => (
-            <TabsContent key={module.id} value={module.id} className="border rounded-lg p-4 sm:p-6 bg-white shadow">
-              <h2 className="text-2xl font-bold mb-4">{module.title}</h2>
-              <p className="mb-6 text-muted-foreground">
-                Study materials and quizzes for {module.title.split(':')[1].trim()}
-              </p>
-
-              <Accordion type="single" collapsible className="w-full">
-                {module.chapters.map((chapter, index) => (
-                  <AccordionItem key={`${module.id}-chapter-${index}`} value={`chapter-${index}`}>
-                    <AccordionTrigger className="text-lg hover:no-underline">
-                      {chapter}
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="space-y-4 p-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Book className="text-primary h-5 w-5" />
-                            <span>Study Material</span>
-                          </div>
-                          <Button variant="outline" size="sm" className="gap-1">
-                            <Book className="h-4 w-4" />
-                            <span>Read</span>
-                          </Button>
-                        </div>
-                        
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Clock className="text-primary h-5 w-5" />
-                            <span>15 min Quiz - 30 questions</span>
+        </div>
+        
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="bg-white/10 text-white mb-4 p-1 w-full flex">
+            {modules.map(module => (
+              <TabsTrigger 
+                key={module.id} 
+                value={module.id}
+                className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white"
+              >
+                {module.title}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          
+          {modules.map(module => (
+            <TabsContent key={module.id} value={module.id}>
+              <Card className="bg-white/5 text-white border-none shadow-lg">
+                <CardContent className="p-6">
+                  <div className="mb-4">
+                    <h2 className="text-2xl font-bold mb-2">
+                      {module.title}: {module.name}
+                    </h2>
+                    <p className="text-auth-light mb-6">
+                      Study each chapter and take the quiz to test your knowledge.
+                    </p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {module.chapters.map((chapter, index) => (
+                      <Card key={index} className="bg-white/10 border-none">
+                        <CardContent className="p-4 flex justify-between items-center">
+                          <div className="flex items-center">
+                            <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center mr-4">
+                              <FileText size={20} className="text-primary-foreground" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold">{chapter}</h3>
+                              <Badge variant="outline" className="text-xs mt-1 bg-white/10">
+                                30 questions
+                              </Badge>
+                            </div>
                           </div>
                           <Button 
-                            onClick={() => handleQuizStart(module.title, chapter)} 
-                            size="sm"
+                            onClick={() => handleStartQuiz(module.id, index)}
+                            className="whitespace-nowrap"
                           >
                             Start Quiz
                           </Button>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           ))}
         </Tabs>
