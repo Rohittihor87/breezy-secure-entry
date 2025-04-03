@@ -12,9 +12,9 @@ const Caiib = () => {
   const handleSubjectSelect = (subject: string) => {
     setLoading(true);
     console.log(`Selected subject: ${subject}`);
-    // In a real app, we would navigate to the specific subject page
+    // Navigate to the appropriate subject page
     setTimeout(() => {
-      navigate(`/caiib/${subject.toLowerCase().replace(/\s+/g, '-')}`);
+      navigate(`/caiib/${subject}`);
       setLoading(false);
     }, 300);
   };
@@ -25,24 +25,28 @@ const Caiib = () => {
       title: 'Advanced Bank Management (ABM)',
       description: 'Advanced banking operations, risk management, and HR practices',
       icon: BookOpen,
+      route: 'advanced-bank-management'
     },
     {
       id: 'bank-financial-management',
       title: 'Bank Financial Management (BFM)',
       description: 'Financial analysis, treasury management, and international banking',
       icon: BookText,
+      route: 'bank-financial-management'
     },
     {
-      id: 'advanced-business-financial-management',
+      id: 'advanced-business-financial',
       title: 'Advanced Business & Financial Management (ABFM)',
       description: 'Complex financial products, corporate finance, and investment banking',
       icon: FileText,
+      route: 'advanced-business-financial'
     },
     {
-      id: 'banking-regulations-business-laws',
+      id: 'banking-regulations',
       title: 'Banking Regulations and Business Laws (BRBL)',
       description: 'Legal framework, compliance, and regulatory requirements for banks',
       icon: ScrollText,
+      route: 'banking-regulations'
     },
   ];
 
@@ -60,7 +64,7 @@ const Caiib = () => {
             <Card 
               key={subject.id}
               className="border-none shadow-lg hover:shadow-xl transition-all hover:scale-105 cursor-pointer" 
-              onClick={() => handleSubjectSelect(subject.id)}
+              onClick={() => handleSubjectSelect(subject.route)}
             >
               <CardContent className="p-6 flex flex-col items-center text-center">
                 <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center mb-4">

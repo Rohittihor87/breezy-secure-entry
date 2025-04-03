@@ -12,11 +12,17 @@ import Caiib from "./pages/Caiib";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
-// Import new JAIIB subject pages
+// Import JAIIB subject pages
 import IndianEconomy from "./pages/jaiib/IndianEconomy";
 import PrinciplesBanking from "./pages/jaiib/PrinciplesBanking";
 import AccountingFinancial from "./pages/jaiib/AccountingFinancial";
 import RetailBanking from "./pages/jaiib/RetailBanking";
+
+// Import CAIIB subject pages
+import AdvancedBankManagement from "./pages/caiib/AdvancedBankManagement";
+import BankFinancialManagement from "./pages/caiib/BankFinancialManagement";
+import AdvancedBusinessFinancial from "./pages/caiib/AdvancedBusinessFinancial";
+import BankingRegulations from "./pages/caiib/BankingRegulations";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +46,12 @@ const App = () => (
           <Route path="/jaiib/principles-banking" element={<PrinciplesBanking />} />
           <Route path="/jaiib/accounting-financial" element={<AccountingFinancial />} />
           <Route path="/jaiib/retail-banking" element={<RetailBanking />} />
+          
+          {/* CAIIB Subject Routes */}
+          <Route path="/caiib/advanced-bank-management" element={<AdvancedBankManagement />} />
+          <Route path="/caiib/bank-financial-management" element={<BankFinancialManagement />} />
+          <Route path="/caiib/advanced-business-financial" element={<AdvancedBusinessFinancial />} />
+          <Route path="/caiib/banking-regulations" element={<BankingRegulations />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
