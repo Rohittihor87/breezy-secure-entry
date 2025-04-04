@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { toast } from "@/hooks/use-toast";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 const IndianEconomy = () => {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const IndianEconomy = () => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [timerActive, setTimerActive] = useState(false);
   const [showResults, setShowResults] = useState(false);
+  const [skippedQuestionsAlert, setSkippedQuestionsAlert] = useState(false);
+  const [skippedCount, setSkippedCount] = useState(0);
   
   const modules = [
     {
@@ -464,10 +467,7 @@ const IndianEconomy = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      calculateScore();
-      setShowResults(true);
-      setTimerActive(false);
-      if (timerRef.current) clearInterval(timerRef.current);
+      checkSkippedQuestions();
     }
   };
 
@@ -483,11 +483,41 @@ const IndianEconomy = () => {
         variant: "default"
       });
     } else {
+      checkSkippedQuestions();
+    }
+  };
+
+  const checkSkippedQuestions = () => {
+    if (!currentChapter) return;
+    
+    const questions = quizQuestions[currentChapter as keyof typeof quizQuestions];
+    const questionsCount = questions.length;
+    const answeredCount = Object.keys(selectedAnswers).length;
+    const skipped = questionsCount - answeredCount;
+    
+    setSkippedCount(skipped);
+    
+    if (skipped > 0) {
+      setSkippedQuestionsAlert(true);
+    } else {
       calculateScore();
       setShowResults(true);
       setTimerActive(false);
       if (timerRef.current) clearInterval(timerRef.current);
     }
+  };
+
+  const handleAlertConfirm = () => {
+    setSkippedQuestionsAlert(false);
+    calculateScore();
+    setShowResults(true);
+    setTimerActive(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  const handleAlertCancel = () => {
+    setSkippedQuestionsAlert(false);
+    // Keep the quiz open but don't show results yet
   };
 
   const calculateScore = () => {
@@ -751,6 +781,26 @@ const IndianEconomy = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <AlertDialog open={skippedQuestionsAlert} onOpenChange={setSkippedQuestionsAlert}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Skipped Questions</AlertDialogTitle>
+              <AlertDialogDescription>
+                You have skipped {skippedCount} question{skippedCount !== 1 ? 's' : ''}. 
+                Would you like to continue and submit the quiz?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={handleAlertCancel}>
+                Go Back to Quiz
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={handleAlertConfirm}>
+                Submit Quiz
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
