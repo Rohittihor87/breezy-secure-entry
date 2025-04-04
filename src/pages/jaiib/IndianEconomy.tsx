@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
+import { toast } from "@/hooks/use-toast";
 
 const IndianEconomy = () => {
   const navigate = useNavigate();
@@ -379,8 +379,17 @@ const IndianEconomy = () => {
   };
 
   const handleStartQuiz = (moduleId: string, chapterIndex: number) => {
-    const chapter = modules.find(m => m.id === moduleId)?.chapters[chapterIndex];
-    if (chapter && quizQuestions[chapter as keyof typeof quizQuestions]) {
+    console.log(`Attempting to start quiz for module ${moduleId}, chapter index ${chapterIndex}`);
+    const module = modules.find(m => m.id === moduleId);
+    if (!module) {
+      console.error(`Module ${moduleId} not found`);
+      return;
+    }
+    
+    const chapter = module.chapters[chapterIndex];
+    console.log(`Starting quiz for chapter: ${chapter}`);
+    
+    if (quizQuestions[chapter as keyof typeof quizQuestions]) {
       setCurrentChapter(chapter);
       setSelectedAnswers({});
       setQuizSubmitted(false);
@@ -388,6 +397,11 @@ const IndianEconomy = () => {
       setShowCorrectAnswers(false);
       setQuizOpen(true);
     } else {
+      toast({
+        title: "Quiz Not Available",
+        description: `Quiz for "${chapter}" is coming soon!`,
+        variant: "destructive"
+      });
       console.log(`Quiz for ${chapter} not available yet`);
     }
   };
@@ -470,16 +484,17 @@ const IndianEconomy = () => {
                             <div>
                               <h3 className="font-semibold">{chapter}</h3>
                               <Badge variant="outline" className="text-xs mt-1 bg-white/10">
-                                {chapter === 'Indian Economy – An Overview' ? '30 questions' : '30 questions'}
+                                {chapter === 'Indian Economy – An Overview' ? '30 questions' : 'Coming soon'}
                               </Badge>
                             </div>
                           </div>
                           <Button 
+                            type="button"
                             onClick={() => handleStartQuiz(module.id, index)}
+                            variant={chapter === 'Indian Economy – An Overview' ? "default" : "secondary"}
                             className="whitespace-nowrap"
-                            disabled={!quizQuestions[chapter as keyof typeof quizQuestions] && chapter !== 'Indian Economy – An Overview'}
                           >
-                            Start Quiz
+                            {chapter === 'Indian Economy – An Overview' ? 'Start Quiz' : 'Coming Soon'}
                           </Button>
                         </CardContent>
                       </Card>
