@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle } from 'lucide-react';
+import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -77,7 +76,6 @@ const IndianEconomy = () => {
     }
   ];
 
-  // Quiz questions for Indian Economy – An Overview
   const quizQuestions = {
     'Indian Economy – An Overview': [
       {
@@ -383,7 +381,6 @@ const IndianEconomy = () => {
     ]
   };
 
-  // Timer functions
   useEffect(() => {
     if (timerActive && timeRemaining > 0) {
       timerRef.current = setInterval(() => {
@@ -467,7 +464,25 @@ const IndianEconomy = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      // This is the last question
+      calculateScore();
+      setShowResults(true);
+      setTimerActive(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const handleSkipQuestion = () => {
+    console.log(`Skipping question ${currentQuestionIndex + 1}`);
+    
+    if (currentChapter && currentQuestionIndex < quizQuestions[currentChapter as keyof typeof quizQuestions].length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      
+      toast({
+        title: "Question Skipped",
+        description: "You can revisit skipped questions in the results.",
+        variant: "default"
+      });
+    } else {
       calculateScore();
       setShowResults(true);
       setTimerActive(false);
@@ -509,10 +524,8 @@ const IndianEconomy = () => {
     setShowResults(false);
   };
 
-  // Get current question if available
   const currentQuestion = currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.[currentQuestionIndex];
   
-  // Calculate progress percentage
   const totalQuestions = currentChapter ? quizQuestions[currentChapter as keyof typeof quizQuestions]?.length : 0;
   const progressPercentage = totalQuestions ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
 
@@ -593,7 +606,6 @@ const IndianEconomy = () => {
           ))}
         </Tabs>
 
-        {/* Quiz Dialog */}
         <Dialog open={quizOpen} onOpenChange={(open) => {
           if (!open) handleCloseQuiz();
           setQuizOpen(open);
@@ -647,7 +659,15 @@ const IndianEconomy = () => {
                   ))}
                 </RadioGroup>
 
-                <div className="mt-6 flex justify-end">
+                <div className="mt-6 flex justify-between">
+                  <Button 
+                    onClick={handleSkipQuestion}
+                    variant="outline"
+                    className="flex items-center"
+                  >
+                    Skip <SkipForward className="ml-1 h-4 w-4" />
+                  </Button>
+                  
                   <Button 
                     onClick={handleNextQuestion}
                     disabled={!selectedAnswers[currentQuestionIndex]}
