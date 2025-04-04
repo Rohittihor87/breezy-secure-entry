@@ -1,7 +1,7 @@
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, ArrowLeft, Check } from 'lucide-react';
+import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { toast } from "@/hooks/use-toast";
 
 const IndianEconomy = () => {
@@ -19,7 +20,11 @@ const IndianEconomy = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [score, setScore] = useState(0);
-  const [showCorrectAnswers, setShowCorrectAnswers] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 minutes in seconds
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [timerActive, setTimerActive] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   
   const modules = [
     {
@@ -378,6 +383,44 @@ const IndianEconomy = () => {
     ]
   };
 
+  // Timer functions
+  useEffect(() => {
+    if (timerActive && timeRemaining > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current as NodeJS.Timeout);
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [timerActive]);
+
+  const handleTimeUp = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimerActive(false);
+    calculateScore();
+    setShowResults(true);
+    toast({
+      title: "Time's up!",
+      description: "Your quiz time has expired.",
+      variant: "destructive"
+    });
+  };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
   const handleStartQuiz = (moduleId: string, chapterIndex: number) => {
     console.log(`Attempting to start quiz for module ${moduleId}, chapter index ${chapterIndex}`);
     const module = modules.find(m => m.id === moduleId);
@@ -394,7 +437,10 @@ const IndianEconomy = () => {
       setSelectedAnswers({});
       setQuizSubmitted(false);
       setScore(0);
-      setShowCorrectAnswers(false);
+      setCurrentQuestionIndex(0);
+      setTimeRemaining(15 * 60); // 15 minutes
+      setTimerActive(true);
+      setShowResults(false);
       setQuizOpen(true);
     } else {
       toast({
@@ -413,7 +459,23 @@ const IndianEconomy = () => {
     }));
   };
 
-  const handleSubmitQuiz = () => {
+  const handleNextQuestion = () => {
+    if (!currentChapter) return;
+    
+    const questions = quizQuestions[currentChapter as keyof typeof quizQuestions];
+    
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+    } else {
+      // This is the last question
+      calculateScore();
+      setShowResults(true);
+      setTimerActive(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const calculateScore = () => {
     if (!currentChapter) return;
     
     const questions = quizQuestions[currentChapter as keyof typeof quizQuestions];
@@ -428,6 +490,31 @@ const IndianEconomy = () => {
     setScore(correctCount);
     setQuizSubmitted(true);
   };
+
+  const handleCloseQuiz = () => {
+    setQuizOpen(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+    setTimerActive(false);
+  };
+
+  const handleRetryQuiz = () => {
+    if (!currentChapter) return;
+    
+    setSelectedAnswers({});
+    setQuizSubmitted(false);
+    setScore(0);
+    setCurrentQuestionIndex(0);
+    setTimeRemaining(15 * 60);
+    setTimerActive(true);
+    setShowResults(false);
+  };
+
+  // Get current question if available
+  const currentQuestion = currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.[currentQuestionIndex];
+  
+  // Calculate progress percentage
+  const totalQuestions = currentChapter ? quizQuestions[currentChapter as keyof typeof quizQuestions]?.length : 0;
+  const progressPercentage = totalQuestions ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
 
   return (
     <div className="min-h-screen w-full bg-auth-gradient p-4 animate-fade-in">
@@ -507,113 +594,140 @@ const IndianEconomy = () => {
         </Tabs>
 
         {/* Quiz Dialog */}
-        <Dialog open={quizOpen} onOpenChange={setQuizOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white">
+        <Dialog open={quizOpen} onOpenChange={(open) => {
+          if (!open) handleCloseQuiz();
+          setQuizOpen(open);
+        }}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
             <DialogHeader>
-              <DialogTitle>{currentChapter} Quiz</DialogTitle>
+              <DialogTitle className="flex justify-between items-center">
+                <span>{currentChapter} Quiz</span>
+                {timerActive && (
+                  <div className="flex items-center text-sm font-medium bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
+                    <Clock className="mr-2 h-4 w-4" />
+                    Time Remaining: {formatTime(timeRemaining)}
+                  </div>
+                )}
+              </DialogTitle>
               <DialogDescription>
-                {quizSubmitted 
-                  ? `You scored ${score}/${currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.length || 0} (${Math.round((score / (currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.length || 1)) * 100)}%)`
-                  : 'Answer all 30 questions to test your knowledge.'}
+                {showResults 
+                  ? `You scored ${score}/${totalQuestions} (${Math.round((score / totalQuestions) * 100)}%)`
+                  : `Question ${currentQuestionIndex + 1} of ${totalQuestions}`
+                }
               </DialogDescription>
+              {!showResults && (
+                <Progress value={progressPercentage} className="mt-2" />
+              )}
             </DialogHeader>
 
-            {currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.map((question, qIndex) => (
-              <div key={qIndex} className={`mb-6 p-4 rounded-lg ${quizSubmitted ? (selectedAnswers[qIndex] === question.answer ? 'bg-green-50' : 'bg-red-50') : 'bg-gray-50'}`}>
-                <div className="flex items-start mb-3">
-                  <span className="font-semibold mr-2">{qIndex + 1}.</span>
-                  <p className="font-medium">{question.question}</p>
+            {!showResults && currentQuestion && (
+              <div className="p-4 rounded-lg bg-gray-50 mb-6">
+                <div className="flex items-start mb-4">
+                  <span className="font-semibold mr-2">{currentQuestionIndex + 1}.</span>
+                  <p className="font-medium">{currentQuestion.question}</p>
                 </div>
                 
                 <RadioGroup
-                  value={selectedAnswers[qIndex] || ""}
-                  onValueChange={(value) => handleAnswerSelect(qIndex, value)}
-                  disabled={quizSubmitted}
-                  className="space-y-2 ml-6"
+                  value={selectedAnswers[currentQuestionIndex] || ""}
+                  onValueChange={(value) => handleAnswerSelect(currentQuestionIndex, value)}
+                  className="space-y-3 ml-6"
                 >
-                  {question.options.map((option) => (
+                  {currentQuestion.options.map((option) => (
                     <div key={option.value} className="flex items-center space-x-2">
                       <RadioGroupItem
                         value={option.value}
-                        id={`q${qIndex}-${option.value}`}
-                        className={quizSubmitted && option.value === question.answer ? 'border-green-500 text-green-500' : ''}
+                        id={`q${currentQuestionIndex}-${option.value}`}
                       />
                       <Label
-                        htmlFor={`q${qIndex}-${option.value}`}
-                        className={`${
-                          quizSubmitted && option.value === question.answer
-                            ? 'text-green-700 font-medium'
-                            : quizSubmitted && selectedAnswers[qIndex] === option.value && selectedAnswers[qIndex] !== question.answer
-                            ? 'text-red-700 line-through'
-                            : ''
-                        }`}
+                        htmlFor={`q${currentQuestionIndex}-${option.value}`}
                       >
                         {option.label}
-                        {quizSubmitted && option.value === question.answer && (
-                          <Check className="inline-block ml-2 h-4 w-4 text-green-600" />
-                        )}
                       </Label>
                     </div>
                   ))}
                 </RadioGroup>
 
-                {quizSubmitted && (
-                  <div className="mt-2 ml-6 text-sm">
-                    {selectedAnswers[qIndex] === question.answer ? (
-                      <p className="text-green-600">Correct!</p>
+                <div className="mt-6 flex justify-end">
+                  <Button 
+                    onClick={handleNextQuestion}
+                    disabled={!selectedAnswers[currentQuestionIndex]}
+                    className="flex items-center"
+                  >
+                    {currentQuestionIndex < totalQuestions - 1 ? (
+                      <>Next<ChevronRight className="ml-1 h-4 w-4" /></>
                     ) : (
-                      <p className="text-red-600">
-                        Incorrect! The correct answer is: {
-                          question.options.find(opt => opt.value === question.answer)?.label
-                        }
-                      </p>
+                      <>Finish Quiz</>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {showResults && (
+              <div className="space-y-6">
+                <div className="p-6 rounded-lg bg-blue-50 text-center">
+                  <h3 className="text-2xl font-bold text-blue-700 mb-2">Quiz Results</h3>
+                  <p className="mb-2">You answered {score} out of {totalQuestions} questions correctly.</p>
+                  <div className="text-3xl font-bold mb-4">
+                    Score: {Math.round((score / totalQuestions) * 100)}%
+                  </div>
+                  <div className="space-y-2">
+                    {score === totalQuestions ? (
+                      <div className="flex items-center justify-center text-green-600">
+                        <Check className="mr-2" /> Perfect score! Excellent work!
+                      </div>
+                    ) : score >= totalQuestions * 0.7 ? (
+                      <p className="text-green-600">Good job! You've passed the quiz.</p>
+                    ) : (
+                      <div className="flex items-center justify-center text-amber-600">
+                        <AlertTriangle className="mr-2" /> You might need to review this chapter again.
+                      </div>
                     )}
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
 
-            <DialogFooter className="flex-col sm:flex-row sm:justify-between gap-2">
-              <div className="flex items-center gap-2">
-                {quizSubmitted && (
-                  <Button
-                    onClick={() => {
-                      setShowCorrectAnswers(!showCorrectAnswers);
-                    }}
-                    variant="outline"
-                  >
-                    {showCorrectAnswers ? "Hide Answers" : "Show All Correct Answers"}
-                  </Button>
-                )}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-lg">Question Summary:</h4>
+                  {currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.map((question, qIndex) => (
+                    <div key={qIndex} className={`p-3 rounded-lg ${selectedAnswers[qIndex] === question.answer ? 'bg-green-50' : 'bg-red-50'}`}>
+                      <div className="flex items-start">
+                        <span className="font-semibold mr-2">{qIndex + 1}.</span>
+                        <div>
+                          <p className="font-medium">{question.question}</p>
+                          <div className="mt-1">
+                            {selectedAnswers[qIndex] === question.answer ? (
+                              <p className="text-green-600 text-sm flex items-center">
+                                <Check className="mr-1 h-4 w-4" /> Correct: {question.options.find(opt => opt.value === question.answer)?.label}
+                              </p>
+                            ) : (
+                              <div className="space-y-1 text-sm">
+                                <p className="text-red-600">Your answer: {question.options.find(opt => opt.value === selectedAnswers[qIndex])?.label || "Not answered"}</p>
+                                <p className="text-green-600">Correct answer: {question.options.find(opt => opt.value === question.answer)?.label}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-2">
+            )}
+
+            <DialogFooter className="flex-col sm:flex-row sm:justify-between gap-2 mt-4">
+              <Button
+                onClick={handleCloseQuiz}
+                variant="outline"
+              >
+                Close
+              </Button>
+              {showResults && (
                 <Button
-                  onClick={() => setQuizOpen(false)}
-                  variant="outline"
+                  onClick={handleRetryQuiz}
                 >
-                  Close
+                  Retry Quiz
                 </Button>
-                {!quizSubmitted && (
-                  <Button
-                    onClick={handleSubmitQuiz}
-                    disabled={Object.keys(selectedAnswers).length < (currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.length || 0)}
-                  >
-                    Submit Quiz
-                  </Button>
-                )}
-                {quizSubmitted && (
-                  <Button
-                    onClick={() => {
-                      setSelectedAnswers({});
-                      setQuizSubmitted(false);
-                      setScore(0);
-                      setShowCorrectAnswers(false);
-                    }}
-                  >
-                    Retry Quiz
-                  </Button>
-                )}
-              </div>
+              )}
             </DialogFooter>
           </DialogContent>
         </Dialog>
