@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward, Lock } from 'lucide-react';
@@ -520,24 +519,25 @@ const IndianEconomy = () => {
     if (skipped > 0) {
       setSkippedQuestionsAlert(true);
     } else {
-      calculateScore();
-      setShowResults(true);
-      setTimerActive(false);
-      if (timerRef.current) clearInterval(timerRef.current);
+      finishQuiz();
     }
   };
 
   const handleAlertConfirm = () => {
     setSkippedQuestionsAlert(false);
-    calculateScore();
-    setShowResults(true);
-    setTimerActive(false);
-    if (timerRef.current) clearInterval(timerRef.current);
+    finishQuiz();
   };
 
   const handleAlertCancel = () => {
     setSkippedQuestionsAlert(false);
     // Keep the quiz open but don't show results yet
+  };
+
+  const finishQuiz = () => {
+    calculateScore();
+    setShowResults(true);
+    setTimerActive(false);
+    if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const calculateScore = () => {
@@ -558,6 +558,7 @@ const IndianEconomy = () => {
 
   const handleCloseQuiz = () => {
     setQuizOpen(false);
+    setShowResults(false); // Reset show results when closing the quiz
     if (timerRef.current) clearInterval(timerRef.current);
     setTimerActive(false);
   };
