@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward, Lock } from 'lucide-react';
@@ -533,19 +532,6 @@ const IndianEconomy = () => {
     // Keep the quiz open but don't show results yet
   };
 
-  const finishQuiz = () => {
-    calculateScore();
-    setQuizSubmitted(true);
-    setShowResults(true);
-    setTimerActive(false);
-    if (timerRef.current) clearInterval(timerRef.current);
-    
-    // Add console logs to help debugging
-    console.log('Quiz finished, results should be shown.');
-    console.log('showResults state:', true);
-    console.log('quizSubmitted state:', true);
-  };
-
   const calculateScore = () => {
     if (!currentChapter) return;
     
@@ -561,12 +547,33 @@ const IndianEconomy = () => {
     setScore(correctCount);
   };
 
+  const finishQuiz = () => {
+    calculateScore();
+    
+    setQuizSubmitted(true);
+    
+    setShowResults(true);
+    
+    setTimerActive(false);
+    if (timerRef.current) clearInterval(timerRef.current);
+    
+    console.log('Quiz finished, results should be shown.');
+    console.log('showResults state:', showResults);
+    console.log('quizSubmitted state:', quizSubmitted);
+  };
+
   const handleCloseQuiz = () => {
-    setQuizOpen(false);
-    setShowResults(false); // Reset show results when closing the quiz
-    setQuizSubmitted(false); // Reset submitted state
     if (timerRef.current) clearInterval(timerRef.current);
     setTimerActive(false);
+    
+    setQuizOpen(false);
+    
+    setTimeout(() => {
+      setShowResults(false);
+      setQuizSubmitted(false);
+      setSelectedAnswers({});
+      setCurrentQuestionIndex(0);
+    }, 100);
   };
 
   const handleRetryQuiz = () => {
@@ -675,15 +682,18 @@ const IndianEconomy = () => {
           ))}
         </Tabs>
 
-        <Dialog open={quizOpen} onOpenChange={(open) => {
-          if (!open) handleCloseQuiz();
-          setQuizOpen(open);
-        }}>
+        <Dialog 
+          open={quizOpen} 
+          onOpenChange={(open) => {
+            if (!open) handleCloseQuiz();
+            setQuizOpen(open);
+          }}
+        >
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white">
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center">
                 <span>{currentChapter} Quiz</span>
-                {timerActive && (
+                {timerActive && !showResults && (
                   <div className="flex items-center text-sm font-medium bg-orange-100 text-orange-800 px-3 py-1 rounded-full">
                     <Clock className="mr-2 h-4 w-4" />
                     Time Remaining: {formatTime(timeRemaining)}
@@ -691,17 +701,17 @@ const IndianEconomy = () => {
                 )}
               </DialogTitle>
               <DialogDescription>
-                {showResults 
+                {quizSubmitted || showResults 
                   ? `You scored ${score}/${totalQuestions} (${Math.round((score / totalQuestions) * 100)}%)`
                   : `Question ${currentQuestionIndex + 1} of ${totalQuestions}`
                 }
               </DialogDescription>
-              {!showResults && (
+              {!showResults && !quizSubmitted && (
                 <Progress value={progressPercentage} className="mt-2" />
               )}
             </DialogHeader>
 
-            {!showResults && currentQuestion && (
+            {!showResults && !quizSubmitted && currentQuestion && (
               <div className="p-4 rounded-lg bg-gray-50 mb-6">
                 <div className="flex items-start mb-4">
                   <span className="font-semibold mr-2">{currentQuestionIndex + 1}.</span>
@@ -757,7 +767,7 @@ const IndianEconomy = () => {
               </div>
             )}
 
-            {showResults && (
+            {(showResults || quizSubmitted) && (
               <div className="space-y-6">
                 <div className="p-6 rounded-lg bg-blue-50 text-center">
                   <h3 className="text-2xl font-bold text-blue-700 mb-2">Quiz Results</h3>
@@ -819,7 +829,7 @@ const IndianEconomy = () => {
               >
                 Close
               </Button>
-              {showResults && (
+              {(showResults || quizSubmitted) && (
                 <Button
                   onClick={handleRetryQuiz}
                 >
