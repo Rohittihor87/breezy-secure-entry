@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward, Lock } from 'lucide-react';
@@ -410,8 +411,7 @@ const IndianEconomy = () => {
   const handleTimeUp = () => {
     if (timerRef.current) clearInterval(timerRef.current);
     setTimerActive(false);
-    calculateScore();
-    setShowResults(true);
+    finishQuiz();
     toast({
       title: "Time's up!",
       description: "Your quiz time has expired.",
@@ -535,9 +535,15 @@ const IndianEconomy = () => {
 
   const finishQuiz = () => {
     calculateScore();
+    setQuizSubmitted(true);
     setShowResults(true);
     setTimerActive(false);
     if (timerRef.current) clearInterval(timerRef.current);
+    
+    // Add console logs to help debugging
+    console.log('Quiz finished, results should be shown.');
+    console.log('showResults state:', true);
+    console.log('quizSubmitted state:', true);
   };
 
   const calculateScore = () => {
@@ -553,12 +559,12 @@ const IndianEconomy = () => {
     });
 
     setScore(correctCount);
-    setQuizSubmitted(true);
   };
 
   const handleCloseQuiz = () => {
     setQuizOpen(false);
     setShowResults(false); // Reset show results when closing the quiz
+    setQuizSubmitted(false); // Reset submitted state
     if (timerRef.current) clearInterval(timerRef.current);
     setTimerActive(false);
   };
