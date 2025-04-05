@@ -1,6 +1,7 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward } from 'lucide-react';
+import { BookOpen, ArrowLeft, Check, ChevronRight, Clock, AlertTriangle, SkipForward, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -39,7 +40,8 @@ const IndianEconomy = () => {
         'Economic Policies',
         'Infrastructure & Economic Development',
         'Globalisation – Impact on India'
-      ]
+      ],
+      freeChapters: 2 // First 2 chapters are free
     },
     {
       id: 'module-b',
@@ -51,7 +53,8 @@ const IndianEconomy = () => {
         'Monetary Policy and Fiscal Policy',
         'Inflation and Business Cycles',
         'Money Supply & Banking System'
-      ]
+      ],
+      freeChapters: 2 // First 2 chapters are free
     },
     {
       id: 'module-c',
@@ -63,7 +66,8 @@ const IndianEconomy = () => {
         'Financial Regulators in India',
         'Role of RBI in Financial System',
         'Development Financial Institutions'
-      ]
+      ],
+      freeChapters: 2 // First 2 chapters are free
     },
     {
       id: 'module-d',
@@ -75,7 +79,8 @@ const IndianEconomy = () => {
         'Alternative Banking Channels',
         'Mutual Funds and Insurance',
         'Derivatives and Other Financial Products'
-      ]
+      ],
+      freeChapters: 2 // First 2 chapters are free
     }
   ];
 
@@ -429,6 +434,16 @@ const IndianEconomy = () => {
       return;
     }
     
+    // Check if the chapter is premium (not in the free chapters)
+    if (chapterIndex >= module.freeChapters) {
+      toast({
+        title: "Premium Content",
+        description: "This quiz is available only for premium users. Upgrade to access all content.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     const chapter = module.chapters[chapterIndex];
     console.log(`Starting quiz for chapter: ${chapter}`);
     
@@ -483,8 +498,13 @@ const IndianEconomy = () => {
         variant: "default"
       });
     } else {
+      // If this is the last question, show the skipped questions dialog or results
       checkSkippedQuestions();
     }
+  };
+
+  const handleSubmitQuiz = () => {
+    checkSkippedQuestions();
   };
 
   const checkSkippedQuestions = () => {
@@ -613,18 +633,30 @@ const IndianEconomy = () => {
                             </div>
                             <div>
                               <h3 className="font-semibold">{chapter}</h3>
-                              <Badge variant="outline" className="text-xs mt-1 bg-white/10">
-                                {chapter === 'Indian Economy – An Overview' ? '30 questions' : 'Coming soon'}
-                              </Badge>
+                              <div className="flex items-center mt-1">
+                                <Badge variant="outline" className="text-xs bg-white/10 mr-2">
+                                  {index === 0 ? '30 questions' : 'Coming soon'}
+                                </Badge>
+                                {index >= module.freeChapters && (
+                                  <Badge variant="outline" className="text-xs bg-amber-400/20 text-amber-300">
+                                    <Lock size={12} className="mr-1" />
+                                    Premium
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
                           </div>
                           <Button 
                             type="button"
                             onClick={() => handleStartQuiz(module.id, index)}
-                            variant={chapter === 'Indian Economy – An Overview' ? "default" : "secondary"}
-                            className="whitespace-nowrap"
+                            variant={index < module.freeChapters ? "default" : "secondary"}
+                            className={`whitespace-nowrap ${index >= module.freeChapters ? "bg-amber-500 hover:bg-amber-600" : ""}`}
                           >
-                            {chapter === 'Indian Economy – An Overview' ? 'Start Quiz' : 'Coming Soon'}
+                            {index < module.freeChapters ? (
+                              chapter === 'Indian Economy – An Overview' ? 'Start Quiz' : 'Coming Soon'
+                            ) : (
+                              <><Lock size={14} className="mr-1" /> Premium</>
+                            )}
                           </Button>
                         </CardContent>
                       </Card>
@@ -698,17 +730,22 @@ const IndianEconomy = () => {
                     Skip <SkipForward className="ml-1 h-4 w-4" />
                   </Button>
                   
-                  <Button 
-                    onClick={handleNextQuestion}
-                    disabled={!selectedAnswers[currentQuestionIndex]}
-                    className="flex items-center"
-                  >
-                    {currentQuestionIndex < totalQuestions - 1 ? (
-                      <>Next<ChevronRight className="ml-1 h-4 w-4" /></>
-                    ) : (
-                      <>Finish Quiz</>
-                    )}
-                  </Button>
+                  {currentQuestionIndex < totalQuestions - 1 ? (
+                    <Button 
+                      onClick={handleNextQuestion}
+                      disabled={!selectedAnswers[currentQuestionIndex]}
+                      className="flex items-center"
+                    >
+                      Next<ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  ) : (
+                    <Button 
+                      onClick={handleSubmitQuiz}
+                      className="flex items-center"
+                    >
+                      Finish Quiz
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -739,19 +776,23 @@ const IndianEconomy = () => {
                 <div className="space-y-4">
                   <h4 className="font-semibold text-lg">Question Summary:</h4>
                   {currentChapter && quizQuestions[currentChapter as keyof typeof quizQuestions]?.map((question, qIndex) => (
-                    <div key={qIndex} className={`p-3 rounded-lg ${selectedAnswers[qIndex] === question.answer ? 'bg-green-50' : 'bg-red-50'}`}>
+                    <div key={qIndex} className={`p-3 rounded-lg ${selectedAnswers[qIndex] === question.answer ? 'bg-green-50' : selectedAnswers[qIndex] ? 'bg-red-50' : 'bg-gray-50'}`}>
                       <div className="flex items-start">
                         <span className="font-semibold mr-2">{qIndex + 1}.</span>
                         <div>
                           <p className="font-medium">{question.question}</p>
                           <div className="mt-1">
-                            {selectedAnswers[qIndex] === question.answer ? (
+                            {!selectedAnswers[qIndex] ? (
+                              <p className="text-gray-600 text-sm flex items-center">
+                                Not answered
+                              </p>
+                            ) : selectedAnswers[qIndex] === question.answer ? (
                               <p className="text-green-600 text-sm flex items-center">
                                 <Check className="mr-1 h-4 w-4" /> Correct: {question.options.find(opt => opt.value === question.answer)?.label}
                               </p>
                             ) : (
                               <div className="space-y-1 text-sm">
-                                <p className="text-red-600">Your answer: {question.options.find(opt => opt.value === selectedAnswers[qIndex])?.label || "Not answered"}</p>
+                                <p className="text-red-600">Your answer: {question.options.find(opt => opt.value === selectedAnswers[qIndex])?.label}</p>
                                 <p className="text-green-600">Correct answer: {question.options.find(opt => opt.value === question.answer)?.label}</p>
                               </div>
                             )}
