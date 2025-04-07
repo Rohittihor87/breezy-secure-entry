@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, AlertTriangle } from 'lucide-react';
+import { Check, AlertTriangle, HelpCircle } from 'lucide-react';
 import { QuizQuestionType } from './QuizQuestion';
 
 type QuizResultsProps = {
@@ -61,24 +61,41 @@ const QuizResults: React.FC<QuizResultsProps> = ({
           >
             <div className="flex items-start">
               <span className="font-semibold mr-2">{qIndex + 1}.</span>
-              <div>
+              <div className="w-full">
                 <p className="font-medium">{question.question}</p>
-                <div className="mt-1">
-                  {!selectedAnswers[qIndex] ? (
-                    <p className="text-gray-600 text-sm flex items-center">
-                      Not answered
-                    </p>
-                  ) : selectedAnswers[qIndex] === question.answer ? (
-                    <p className="text-green-600 text-sm flex items-center">
-                      <Check className="mr-1 h-4 w-4" /> Correct: {question.options.find(opt => opt.value === question.answer)?.label}
-                    </p>
-                  ) : (
-                    <div className="space-y-1 text-sm">
-                      <p className="text-red-600">Your answer: {question.options.find(opt => opt.value === selectedAnswers[qIndex])?.label}</p>
-                      <p className="text-green-600">Correct answer: {question.options.find(opt => opt.value === question.answer)?.label}</p>
+                
+                <div className="mt-2 space-y-2">
+                  {/* Display all options with correct answer in bold */}
+                  {question.options.map((option) => (
+                    <div 
+                      key={option.value}
+                      className={`p-2 rounded-md ${
+                        option.value === question.answer
+                          ? 'bg-green-100 font-bold' // Correct answer
+                          : selectedAnswers[qIndex] === option.value
+                            ? 'bg-red-100' // Incorrect selected answer
+                            : 'bg-gray-100' // Other options
+                      }`}
+                    >
+                      {option.label}
+                      {option.value === question.answer && (
+                        <span className="ml-2 text-green-600">
+                          <Check className="inline-block h-4 w-4" /> Correct Answer
+                        </span>
+                      )}
+                      {selectedAnswers[qIndex] === option.value && option.value !== question.answer && (
+                        <span className="ml-2 text-red-600">Your answer</span>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
+                
+                {!selectedAnswers[qIndex] && (
+                  <div className="mt-2 flex items-center text-gray-600">
+                    <HelpCircle className="mr-1 h-4 w-4" /> 
+                    Question skipped
+                  </div>
+                )}
               </div>
             </div>
           </div>
