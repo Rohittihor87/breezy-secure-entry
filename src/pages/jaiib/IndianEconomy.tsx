@@ -4,48 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 // Import custom components
 import ModuleCard from '@/components/jaiib/ModuleCard';
-import QuizModal from '@/components/jaiib/QuizModal';
 
-// Import data and hooks
+// Import data
 import { modules } from '@/data/jaiib/modules';
-import { quizQuestions } from '@/data/jaiib/quizQuestions';
-import { useQuiz } from '@/hooks/jaiib/useQuiz';
 
 const IndianEconomy = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('module-a');
-  
-  const {
-    quizOpen,
-    setQuizOpen,
-    currentChapter,
-    selectedAnswers,
-    quizSubmitted,
-    score,
-    currentQuestionIndex,
-    timeRemaining,
-    timerActive,
-    showResults,
-    skippedQuestionsAlert,
-    setSkippedQuestionsAlert,
-    skippedCount,
-    currentQuestion,
-    totalQuestions,
-    progressPercentage,
-    handleStartQuiz,
-    handleAnswerSelect,
-    handleNextQuestion,
-    handleSkipQuestion,
-    handleSubmitQuiz,
-    handleAlertConfirm,
-    handleAlertCancel,
-    handleCloseQuiz,
-    handleRetryQuiz
-  } = useQuiz({ quizQuestions });
 
   return (
     <div className="min-h-screen w-full bg-auth-gradient p-4 animate-fade-in">
@@ -80,56 +48,10 @@ const IndianEconomy = () => {
           
           {modules.map(module => (
             <TabsContent key={module.id} value={module.id}>
-              <ModuleCard 
-                module={module} 
-                onStartQuiz={handleStartQuiz}
-              />
+              <ModuleCard module={module} />
             </TabsContent>
           ))}
         </Tabs>
-
-        <QuizModal
-          quizOpen={quizOpen}
-          setQuizOpen={setQuizOpen}
-          handleCloseQuiz={handleCloseQuiz}
-          currentChapter={currentChapter}
-          timeRemaining={timeRemaining}
-          timerActive={timerActive}
-          showResults={showResults}
-          quizSubmitted={quizSubmitted}
-          score={score}
-          totalQuestions={totalQuestions}
-          currentQuestionIndex={currentQuestionIndex}
-          progressPercentage={progressPercentage}
-          currentQuestion={currentQuestion}
-          selectedAnswers={selectedAnswers}
-          handleAnswerSelect={handleAnswerSelect}
-          handleNextQuestion={handleNextQuestion}
-          handleSubmitQuiz={handleSubmitQuiz}
-          handleSkipQuestion={handleSkipQuestion}
-          handleRetryQuiz={handleRetryQuiz}
-          quizQuestions={quizQuestions}
-        />
-
-        <AlertDialog open={skippedQuestionsAlert} onOpenChange={setSkippedQuestionsAlert}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Skipped Questions</AlertDialogTitle>
-              <AlertDialogDescription>
-                You have skipped {skippedCount} question{skippedCount !== 1 ? 's' : ''}. 
-                Would you like to continue and submit the quiz?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleAlertCancel}>
-                Go Back to Quiz
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleAlertConfirm}>
-                Submit Quiz
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
     </div>
   );

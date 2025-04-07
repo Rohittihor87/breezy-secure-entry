@@ -17,6 +17,7 @@ import IndianEconomy from "./pages/jaiib/IndianEconomy";
 import PrinciplesBanking from "./pages/jaiib/PrinciplesBanking";
 import AccountingFinancial from "./pages/jaiib/AccountingFinancial";
 import RetailBanking from "./pages/jaiib/RetailBanking";
+import QuizPage from "./pages/jaiib/QuizPage";
 
 // Import CAIIB subject pages
 import AdvancedBankManagement from "./pages/caiib/AdvancedBankManagement";
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/jaiib/principles-banking" element={<PrinciplesBanking />} />
           <Route path="/jaiib/accounting-financial" element={<AccountingFinancial />} />
           <Route path="/jaiib/retail-banking" element={<RetailBanking />} />
+          <Route path="/jaiib/quiz" element={<QuizPage />} />
           
           {/* CAIIB Subject Routes */}
           <Route path="/caiib/advanced-bank-management" element={<AdvancedBankManagement />} />

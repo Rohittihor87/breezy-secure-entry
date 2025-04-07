@@ -1,25 +1,57 @@
 
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, Lock } from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
 
 type ChapterProps = {
   title: string;
   index: number;
   freeChapters: number;
   moduleId: string;
-  onStartQuiz: (moduleId: string, chapterIndex: number) => void;
 };
 
 export const ChapterItem = ({ 
   title, 
   index, 
   freeChapters, 
-  moduleId, 
-  onStartQuiz 
+  moduleId,
 }: ChapterProps) => {
+  const navigate = useNavigate();
   const isPremium = index >= freeChapters;
+  
+  const handleStartQuiz = () => {
+    // Check if the chapter is premium
+    if (isPremium) {
+      toast({
+        title: "Premium Content",
+        description: "This quiz is available only for premium users. Upgrade to access all content.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // If not the first chapter, show coming soon message
+    if (title !== 'Indian Economy – An Overview') {
+      toast({
+        title: "Quiz Not Available",
+        description: `Quiz for "${title}" is coming soon!`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Navigate to the quiz page with state
+    navigate('/jaiib/quiz', {
+      state: {
+        moduleId,
+        chapterIndex: index,
+        chapterTitle: title
+      }
+    });
+  };
   
   return (
     <Card className="bg-white/10 border-none">
@@ -45,7 +77,7 @@ export const ChapterItem = ({
         </div>
         <Button 
           type="button"
-          onClick={() => onStartQuiz(moduleId, index)}
+          onClick={handleStartQuiz}
           variant={index < freeChapters ? "default" : "secondary"}
           className={`whitespace-nowrap ${isPremium ? "bg-amber-500 hover:bg-amber-600" : ""}`}
         >
@@ -68,10 +100,9 @@ type ModuleCardProps = {
     chapters: string[];
     freeChapters: number;
   };
-  onStartQuiz: (moduleId: string, chapterIndex: number) => void;
 };
 
-const ModuleCard = ({ module, onStartQuiz }: ModuleCardProps) => {
+const ModuleCard = ({ module }: ModuleCardProps) => {
   return (
     <Card className="bg-white/5 text-white border-none shadow-lg">
       <CardContent className="p-6">
@@ -92,7 +123,6 @@ const ModuleCard = ({ module, onStartQuiz }: ModuleCardProps) => {
               index={index}
               freeChapters={module.freeChapters}
               moduleId={module.id}
-              onStartQuiz={onStartQuiz}
             />
           ))}
         </div>

@@ -39,10 +39,10 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
   progressPercentage
 }) => {
   return (
-    <>
-      <Progress value={progressPercentage} className="mt-2" />
-      <div className="p-4 rounded-lg bg-gray-50 mb-6">
-        <div className="flex items-start mb-4">
+    <div className="bg-white rounded-lg shadow-lg animate-fade-in">
+      <Progress value={progressPercentage} className="rounded-t-lg h-2" />
+      <div className="p-6">
+        <div className="flex items-start mb-6">
           <span className="font-semibold mr-2">{currentQuestionIndex + 1}.</span>
           <p className="font-medium">{currentQuestion.question}</p>
         </div>
@@ -50,16 +50,17 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
         <RadioGroup
           value={selectedAnswers[currentQuestionIndex] || ""}
           onValueChange={(value) => handleAnswerSelect(currentQuestionIndex, value)}
-          className="space-y-3 ml-6"
+          className="space-y-4 ml-6 mb-8"
         >
           {currentQuestion.options.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
+            <div key={option.value} className="flex items-center space-x-3 p-3 hover:bg-slate-50 rounded-lg transition-colors">
               <RadioGroupItem
                 value={option.value}
                 id={`q${currentQuestionIndex}-${option.value}`}
               />
               <Label
                 htmlFor={`q${currentQuestionIndex}-${option.value}`}
+                className="flex-1 cursor-pointer"
               >
                 {option.label}
               </Label>
@@ -67,7 +68,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           ))}
         </RadioGroup>
 
-        <div className="mt-6 flex justify-between">
+        <div className="flex justify-between mt-8">
           <Button 
             onClick={handleSkipQuestion}
             variant="outline"
@@ -94,7 +95,7 @@ const QuizQuestion: React.FC<QuizQuestionProps> = ({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
