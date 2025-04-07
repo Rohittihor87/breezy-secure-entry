@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from "@/hooks/use-toast";
 import { QuizQuestionsData } from '@/data/jaiib/quizQuestions';
@@ -6,6 +5,7 @@ import { modules } from '@/data/jaiib/modules';
 import { useQuizTimer } from './useQuizTimer';
 import { useQuizAnswers } from './useQuizAnswers';
 import { useQuizNavigation } from './useQuizNavigation';
+import { useLocation } from 'react-router-dom';
 
 type UseQuizProps = {
   quizQuestions: QuizQuestionsData;
@@ -14,6 +14,7 @@ type UseQuizProps = {
 export const useQuiz = ({ quizQuestions }: UseQuizProps) => {
   const [quizOpen, setQuizOpen] = useState(false);
   const [currentChapter, setCurrentChapter] = useState<string | null>(null);
+  const location = useLocation();
   
   // Get total questions for current chapter
   const totalQuestions = currentChapter ? quizQuestions[currentChapter as keyof typeof quizQuestions]?.length : 0;
@@ -87,6 +88,14 @@ export const useQuiz = ({ quizQuestions }: UseQuizProps) => {
       resetTimer();
       startTimer();
       setQuizOpen(true);
+      
+      // Pass current path as returnPath
+      return {
+        moduleId,
+        chapterIndex,
+        chapterTitle: chapter,
+        returnPath: location.pathname // Store the current path to return to
+      };
     } else {
       toast({
         title: "Quiz Not Available",
@@ -94,6 +103,7 @@ export const useQuiz = ({ quizQuestions }: UseQuizProps) => {
         variant: "destructive"
       });
       console.log(`Quiz for ${chapter} not available yet`);
+      return null;
     }
   };
 

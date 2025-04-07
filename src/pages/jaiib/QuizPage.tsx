@@ -17,6 +17,7 @@ interface LocationState {
   moduleId: string;
   chapterIndex: number;
   chapterTitle: string;
+  returnPath?: string; // Add returnPath to track where user came from
 }
 
 const QuizPage = () => {
@@ -25,7 +26,7 @@ const QuizPage = () => {
   const state = location.state as LocationState;
   
   // Extract quiz parameters from location state
-  const { moduleId, chapterIndex, chapterTitle } = state || {};
+  const { moduleId, chapterIndex, chapterTitle, returnPath } = state || {};
   
   // Find the module and chapter
   const module = modules.find(m => m.id === moduleId);
@@ -53,7 +54,7 @@ const QuizPage = () => {
   useEffect(() => {
     if (!chapter || !module) {
       // If no valid chapter data, redirect back
-      navigate(`/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
+      navigate(returnPath || `/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
       return;
     }
 
@@ -76,7 +77,7 @@ const QuizPage = () => {
         setTimerRef(null);
       };
     }
-  }, [timerActive, timeRemaining, chapter, module]);
+  }, [timerActive, timeRemaining, chapter, module, returnPath]);
 
   const handleTimeUp = () => {
     setTimerActive(false);
@@ -175,8 +176,8 @@ const QuizPage = () => {
       setTimerRef(null);
     }
     
-    // Navigate back to the subject page
-    navigate(`/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
+    // Navigate back to the subject page, using returnPath if available
+    navigate(returnPath || `/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
   };
 
   const handleRetryQuiz = () => {
