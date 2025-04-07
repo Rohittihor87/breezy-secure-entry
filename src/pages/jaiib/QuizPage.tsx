@@ -1,16 +1,15 @@
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { ArrowLeft, AlertTriangle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import QuizQuestion from '@/components/jaiib/QuizQuestion';
-import QuizTimer from '@/components/jaiib/QuizTimer';
-import QuizResults from '@/components/jaiib/QuizResults';
 import { quizQuestions } from '@/data/jaiib/quizQuestions';
 import { modules } from '@/data/jaiib/modules';
-import { toast } from "@/hooks/use-toast";
+import QuizQuestion from '@/components/jaiib/QuizQuestion';
+import QuizResults from '@/components/jaiib/QuizResults';
+import QuizHeader from '@/components/jaiib/QuizHeader';
+import QuizProgress from '@/components/jaiib/QuizProgress';
+import SkippedQuestionsAlert from '@/components/jaiib/SkippedQuestionsAlert';
+import QuizResultActions from '@/components/jaiib/QuizResultActions';
+import { useQuizState } from '@/hooks/jaiib/useQuizState';
 
 // Define interface for location state
 interface LocationState {
@@ -32,162 +31,34 @@ const QuizPage = () => {
   const module = modules.find(m => m.id === moduleId);
   const chapter = module?.chapters[chapterIndex];
   
-  // Quiz state
-  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, string>>({});
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeRemaining, setTimeRemaining] = useState(15 * 60); // 15 minutes
-  const [timerActive, setTimerActive] = useState(true);
-  const [timerRef, setTimerRef] = useState<NodeJS.Timeout | null>(null);
-  const [quizSubmitted, setQuizSubmitted] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [skippedQuestionsAlert, setSkippedQuestionsAlert] = useState(false);
-  const [skippedCount, setSkippedCount] = useState(0);
-  const [score, setScore] = useState(0);
-
   // Get the questions for this chapter
   const questions = chapter ? quizQuestions[chapter as keyof typeof quizQuestions] : [];
   const totalQuestions = questions?.length || 0;
-  const progressPercentage = totalQuestions ? ((currentQuestionIndex + 1) / totalQuestions) * 100 : 0;
-  const currentQuestion = questions?.[currentQuestionIndex];
-
-  // Timer effect
+  
+  // Redirect if no valid data
   useEffect(() => {
     if (!chapter || !module) {
       // If no valid chapter data, redirect back
       navigate(returnPath || `/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
-      return;
     }
-
-    if (timerActive && timeRemaining > 0) {
-      const intervalId = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            clearInterval(intervalId);
-            setTimerRef(null);
-            handleTimeUp();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      setTimerRef(intervalId);
-
-      return () => {
-        clearInterval(intervalId);
-        setTimerRef(null);
-      };
-    }
-  }, [timerActive, timeRemaining, chapter, module, returnPath]);
-
-  const handleTimeUp = () => {
-    setTimerActive(false);
-    finishQuiz();
-    toast({
-      title: "Time's up!",
-      description: "Your quiz time has expired.",
-      variant: "destructive"
-    });
-  };
-
-  const handleAnswerSelect = (questionIndex: number, value: string) => {
-    setSelectedAnswers(prev => ({
-      ...prev,
-      [questionIndex]: value
-    }));
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-    } else {
-      checkSkippedQuestions();
-    }
-  };
-
-  const handleSkipQuestion = () => {
-    if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-      
-      toast({
-        title: "Question Skipped",
-        description: "You can revisit skipped questions in the results.",
-        variant: "default"
-      });
-    } else {
-      // If this is the last question, show the skipped questions dialog or results
-      checkSkippedQuestions();
-    }
-  };
-
-  const handleSubmitQuiz = () => {
-    checkSkippedQuestions();
-  };
-
-  const checkSkippedQuestions = () => {
-    const questionsCount = totalQuestions;
-    const answeredCount = Object.keys(selectedAnswers).length;
-    const skipped = questionsCount - answeredCount;
-    
-    setSkippedCount(skipped);
-    
-    if (skipped > 0) {
-      setSkippedQuestionsAlert(true);
-    } else {
-      finishQuiz();
-    }
-  };
-
-  const handleAlertConfirm = () => {
-    setSkippedQuestionsAlert(false);
-    finishQuiz();
-  };
-
-  const handleAlertCancel = () => {
-    setSkippedQuestionsAlert(false);
-  };
-
-  const calculateScore = () => {
-    let correctCount = 0;
-
-    questions.forEach((question, index) => {
-      if (selectedAnswers[index] === question.answer) {
-        correctCount++;
-      }
-    });
-
-    setScore(correctCount);
-  };
+  }, [chapter, module, navigate, returnPath]);
 
   const finishQuiz = () => {
-    calculateScore();
-    setQuizSubmitted(true);
-    setShowResults(true);
-    setTimerActive(false);
-    
-    if (timerRef) {
-      clearInterval(timerRef);
-      setTimerRef(null);
-    }
+    // This function will be called when the timer ends
+    quizState.handleSubmitQuiz();
   };
 
+  const quizState = useQuizState({
+    totalQuestions,
+    questions,
+    onTimeUp: finishQuiz
+  });
+
   const handleExitQuiz = () => {
-    if (timerRef) {
-      clearInterval(timerRef);
-      setTimerRef(null);
-    }
+    quizState.stopTimer();
     
     // Navigate back to the subject page, using returnPath if available
     navigate(returnPath || `/jaiib/${module?.id.replace('module-', '') || 'indian-economy'}`);
-  };
-
-  const handleRetryQuiz = () => {
-    setSelectedAnswers({});
-    setQuizSubmitted(false);
-    setScore(0);
-    setCurrentQuestionIndex(0);
-    setTimeRemaining(15 * 60);
-    setTimerActive(true);
-    setShowResults(false);
   };
 
   if (!module || !chapter) {
@@ -197,96 +68,59 @@ const QuizPage = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-b from-primary/30 to-background p-4 animate-fade-in">
       <div className="max-w-4xl mx-auto">
-        <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
-          <Button 
-            variant="ghost" 
-            onClick={handleExitQuiz}
-            className="mb-4 md:mb-0"
-          >
-            <ArrowLeft className="mr-2" size={16} />
-            Exit Quiz
-          </Button>
-          
-          <div className="flex flex-col items-end">
-            <h1 className="text-2xl font-bold mb-1">{chapterTitle}</h1>
-            <p className="text-muted-foreground text-sm">
-              {module.title}: {module.name}
-            </p>
-          </div>
-        </div>
+        <QuizHeader 
+          chapterTitle={chapterTitle}
+          moduleTitle={module.title}
+          moduleName={module.name}
+          onExit={handleExitQuiz}
+        />
         
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <p className="text-sm font-medium mb-1">Question {currentQuestionIndex + 1} of {totalQuestions}</p>
-          </div>
-          <QuizTimer timeRemaining={timeRemaining} />
-        </div>
+        <QuizProgress 
+          currentQuestionIndex={quizState.currentQuestionIndex}
+          totalQuestions={totalQuestions}
+          timeRemaining={quizState.timeRemaining}
+        />
         
-        {!showResults ? (
+        {!quizState.showResults ? (
           <>
-            {currentQuestion && (
+            {quizState.currentQuestion && (
               <QuizQuestion
-                currentQuestion={currentQuestion}
-                currentQuestionIndex={currentQuestionIndex}
+                currentQuestion={quizState.currentQuestion}
+                currentQuestionIndex={quizState.currentQuestionIndex}
                 totalQuestions={totalQuestions}
-                selectedAnswers={selectedAnswers}
-                handleAnswerSelect={handleAnswerSelect}
-                handleNextQuestion={handleNextQuestion}
-                handleSubmitQuiz={handleSubmitQuiz}
-                handleSkipQuestion={handleSkipQuestion}
-                progressPercentage={progressPercentage}
+                selectedAnswers={quizState.selectedAnswers}
+                handleAnswerSelect={quizState.handleAnswerSelect}
+                handleNextQuestion={quizState.handleNextQuestion}
+                handleSubmitQuiz={quizState.handleSubmitQuiz}
+                handleSkipQuestion={quizState.handleSkipQuestion}
+                progressPercentage={quizState.progressPercentage}
               />
             )}
           </>
         ) : (
           <div className="bg-white rounded-lg shadow-lg p-6 animate-fade-in">
             <QuizResults
-              score={score}
+              score={quizState.score}
               totalQuestions={totalQuestions}
               currentChapter={chapter}
-              selectedAnswers={selectedAnswers}
+              selectedAnswers={quizState.selectedAnswers}
               questions={quizQuestions}
             />
             
-            <div className="mt-8 flex justify-between">
-              <Button 
-                variant="outline" 
-                onClick={handleExitQuiz}
-              >
-                Exit
-              </Button>
-              
-              <Button 
-                onClick={handleRetryQuiz}
-              >
-                Try Again
-              </Button>
-            </div>
+            <QuizResultActions 
+              onExit={handleExitQuiz}
+              onRetry={quizState.resetQuiz}
+            />
           </div>
         )}
         
-        <AlertDialog open={skippedQuestionsAlert} onOpenChange={setSkippedQuestionsAlert}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle className="flex items-center">
-                <AlertTriangle className="mr-2 h-5 w-5 text-amber-500" />
-                Skipped Questions
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                You have skipped {skippedCount} question{skippedCount !== 1 ? 's' : ''}. 
-                Would you like to continue and submit the quiz?
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={handleAlertCancel}>
-                Go Back to Quiz
-              </AlertDialogCancel>
-              <AlertDialogAction onClick={handleAlertConfirm}>
-                Submit Quiz
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        <SkippedQuestionsAlert 
+          open={quizState.skippedQuestionsAlert}
+          skippedCount={quizState.skippedCount}
+          onOpenChange={quizState.setSkippedQuestionsAlert}
+          onConfirm={quizState.handleAlertConfirm}
+          onCancel={quizState.handleAlertCancel}
+        />
       </div>
     </div>
   );
