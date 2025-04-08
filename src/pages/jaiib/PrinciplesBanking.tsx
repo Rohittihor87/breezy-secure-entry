@@ -6,10 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import useQuiz from '@/hooks/jaiib/useQuiz';
+import { quizQuestions } from '@/data/jaiib/quizQuestions';
+import QuizModal from '@/components/jaiib/QuizModal';
 
 const PrinciplesBanking = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('module-a');
+  const quiz = useQuiz({ quizQuestions });
   
   const modules = [
     {
@@ -65,8 +69,12 @@ const PrinciplesBanking = () => {
   const handleStartQuiz = (moduleId: string, chapterIndex: number) => {
     const chapter = modules.find(m => m.id === moduleId)?.chapters[chapterIndex];
     console.log(`Starting quiz for ${moduleId}, Chapter: ${chapter}`);
-    // In a real app, we would navigate to the quiz page
-    // navigate(`/jaiib/principles-banking/${moduleId}/quiz/${chapterIndex}`);
+    
+    // Instead of using the standalone quiz hook, navigate to the quiz page
+    const quizState = quiz.handleStartQuiz(moduleId, chapterIndex);
+    if (quizState) {
+      navigate('/jaiib/quiz', { state: quizState });
+    }
   };
 
   return (
@@ -144,6 +152,29 @@ const PrinciplesBanking = () => {
           ))}
         </Tabs>
       </div>
+      
+      <QuizModal
+        quizOpen={quiz.quizOpen}
+        setQuizOpen={quiz.setQuizOpen}
+        handleCloseQuiz={quiz.handleCloseQuiz}
+        currentChapter={quiz.currentChapter}
+        timeRemaining={quiz.timeRemaining}
+        timerActive={quiz.timerActive}
+        showResults={quiz.showResults}
+        quizSubmitted={quiz.quizSubmitted}
+        score={quiz.score}
+        totalQuestions={quiz.totalQuestions}
+        currentQuestionIndex={quiz.currentQuestionIndex}
+        progressPercentage={quiz.progressPercentage}
+        currentQuestion={quiz.currentQuestion}
+        selectedAnswers={quiz.selectedAnswers}
+        handleAnswerSelect={quiz.handleAnswerSelect}
+        handleNextQuestion={quiz.handleNextQuestion}
+        handleSubmitQuiz={quiz.handleSubmitQuiz}
+        handleSkipQuestion={quiz.handleSkipQuestion}
+        handleRetryQuiz={quiz.handleRetryQuiz}
+        quizQuestions={quizQuestions}
+      />
     </div>
   );
 };
