@@ -59,5 +59,21 @@ export const modules: JaiibModule[] = [
       'Derivatives and Other Financial Products'
     ],
     freeChapters: 2 // First 2 chapters are free
+  },
+  {
+    id: 'module-e',
+    title: 'Module E',
+    name: 'Final Challenge',
+    chapters: [
+      'Module A - 100 Questions',
+      'Module B - 100 Questions',
+      'Module C - 100 Questions', 
+      'Module D - 100 Questions',
+      'Indian Economy & Indian Financial System I',
+      'Indian Economy & Indian Financial System II',
+      'Indian Economy & Indian Financial System III',
+      'Indian Economy & Indian Financial System IV'
+    ],
+    freeChapters: 1 // Only first challenge is free
   }
 ];

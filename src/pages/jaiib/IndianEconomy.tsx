@@ -34,7 +34,7 @@ const IndianEconomy = () => {
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="bg-white/10 text-white mb-4 p-1 w-full flex">
+          <TabsList className="bg-white/10 text-white mb-4 p-1 w-full flex flex-wrap">
             {modules.map(module => (
               <TabsTrigger 
                 key={module.id} 
