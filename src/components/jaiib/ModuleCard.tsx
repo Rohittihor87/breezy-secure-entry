@@ -21,6 +21,7 @@ export const ChapterItem = ({
 }: ChapterProps) => {
   const navigate = useNavigate();
   const isPremium = index >= freeChapters;
+  const isFinalChallenge = moduleId === 'module-e';
   
   const handleStartQuiz = () => {
     // Check if the chapter is premium
@@ -64,7 +65,7 @@ export const ChapterItem = ({
             <h3 className="font-semibold">{title}</h3>
             <div className="flex items-center mt-1">
               <Badge variant="outline" className="text-xs bg-white/10 mr-2">
-                {index === 0 ? '30 questions' : 'Coming soon'}
+                {isFinalChallenge ? '100 questions' : (index === 0 ? '30 questions' : 'Coming soon')}
               </Badge>
               {isPremium && (
                 <Badge variant="outline" className="text-xs bg-amber-400/20 text-amber-300">
