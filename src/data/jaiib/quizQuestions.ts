@@ -1,3 +1,4 @@
+
 import { QuizQuestionType } from "@/components/jaiib/QuizQuestion";
 
 export type QuizQuestionsData = Record<string, QuizQuestionType[]>;
@@ -306,7 +307,7 @@ export const quizQuestions: QuizQuestionsData = {
     }
   ],
   
-  // Add the Module A final challenge questions
+  // Module A final challenge questions
   'Module A': [
     {
       question: "Which two primary Acts mainly govern banking in India according to the introduction?",
@@ -607,96 +608,310 @@ export const quizQuestions: QuizQuestionsData = {
         { value: "d", label: "NABARD" }
       ],
       answer: "b"
-    },
+    }
+  ],
+  
+  // Adding the new CAIIB Banking Regulations questions
+  'RBI Act, Banking Regulation Act': [
     {
-      question: "Banks dealing in securities like shares and debentures are subject to regulation by:",
+      question: "What is the primary legislation governing banking regulation in India mentioned in the Introduction?",
       options: [
-        { value: "a", label: "RBI only" },
-        { value: "b", label: "IRDA" },
-        { value: "c", label: "Securities and Exchange Board of India (SEBI)" },
-        { value: "d", label: "Ministry of Finance" }
-      ],
-      answer: "c"
-    },
-    {
-      question: "The requirement for a banking license under Section 22 of the BR Act is primarily meant to:",
-      options: [
-        { value: "a", label: "Generate revenue for the RBI" },
-        { value: "b", label: "Ensure only banks operating on sound lines continue and prevent indiscriminate formation" },
-        { value: "c", label: "Restrict the number of banks in the country" },
-        { value: "d", label: "Control foreign investment in banks" }
+        { value: "a", label: "The Companies Act, 2013" },
+        { value: "b", label: "The Reserve Bank of India Act, 1934 and The Banking Regulation Act, 1949" },
+        { value: "c", label: "The Securities Contract (Regulation) Act, 1956" },
+        { value: "d", label: "The Foreign Exchange Management Act, 1999" }
       ],
       answer: "b"
     },
     {
-      question: "Before granting a license under Section 22(3), RBI needs to be satisfied about the applicant bank's:",
+      question: "The applicability of the regulatory provisions of the RBI Act and BR Act to a bank primarily depends on its:",
       options: [
-        { value: "a", label: "Branch network size" },
-        { value: "b", label: "Marketing strategy" },
-        { value: "c", label: "Ability to pay depositors, non-detrimental affairs, management character, capital adequacy, earning prospects, public interest" },
-        { value: "d", label: "Number of employees" }
+        { value: "a", label: "Profitability" },
+        { value: "b", label: "Number of branches" },
+        { value: "c", label: "Constitution (statutory corporation, banking company, co-operative society)" },
+        { value: "d", label: "Geographical location" }
       ],
       answer: "c"
     },
     {
-      question: "For licensing foreign banks, RBI considers factors like:",
+      question: "According to the definition in Section 5(b) of the BR Act, 1949, banking involves accepting deposits for the purpose of:",
       options: [
-        { value: "a", label: "The bank's advertising budget" },
-        { value: "b", label: "Home country supervision standards, economic/political relations, financial soundness, ownership pattern, international ranking" },
-        { value: "c", label: "The number of ATMs planned" },
-        { value: "d", label: "The colour scheme of the branches" }
+        { value: "a", label: "Safekeeping only" },
+        { value: "b", label: "Lending or investing" },
+        { value: "c", label: "Paying government taxes" },
+        { value: "d", label: "Issuing insurance policies" }
       ],
       answer: "b"
     },
     {
-      question: "The \"Guidelines for 'on tap' licensing of Universal Banks in the Private Sector\" were issued by RBI in:",
+      question: "Which of the following is NOT one of the two essential functions necessarily performed by a bank as per the definition?",
       options: [
-        { value: "a", label: "2013" },
-        { value: "b", label: "2014" },
-        { value: "c", label: "2015" },
-        { value: "d", label: "2016" }
+        { value: "a", label: "Acceptance of deposits from the public" },
+        { value: "b", label: "Lending of such deposits" },
+        { value: "c", label: "Investment of such deposits" },
+        { value: "d", label: "Providing locker facilities" }
       ],
       answer: "d"
     },
     {
-      question: "A Small Finance Bank must be registered as a:",
+      question: "Deposits accepted by a bank must be repayable:",
       options: [
-        { value: "a", label: "Private limited company" },
-        { value: "b", label: "Public limited company under the Companies Act, 2013" },
-        { value: "c", label: "Co-operative society" },
-        { value: "d", label: "Partnership firm" }
-      ],
-      answer: "b"
-    },
-    {
-      question: "RBI can cancel a banking license under Section 22(4) if the company:",
-      options: [
-        { value: "a", label: "Changes its name" },
-        { value: "b", label: "Opens a new branch" },
-        { value: "c", label: "Ceases banking business, fails to comply with license conditions, or fails conditions of Sec 22(3)/(3A)" },
-        { value: "d", label: "Appoints a new director" }
+        { value: "a", label: "Only on demand" },
+        { value: "b", label: "Only after a fixed period" },
+        { value: "c", label: "On demand or otherwise (as agreed) and withdrawable by specified means" },
+        { value: "d", label: "Only through electronic transfer" }
       ],
       answer: "c"
     },
     {
-      question: "Approval for opening a new place of business in India or changing the location outside the same city/town/village requires prior permission from RBI under:",
+      question: "What does the term \"public\" imply in the context of accepting deposits?",
       options: [
-        { value: "a", label: "Section 22 BR Act" },
-        { value: "b", label: "Section 23 BR Act" },
-        { value: "c", label: "Section 24 BR Act" },
-        { value: "d", label: "Section 26 BR Act" }
+        { value: "a", label: "Banks must accept deposits from every single person who offers money." },
+        { value: "b", label: "Banks generally accept deposits from the general populace but can refuse undesirable persons subject to KYC norms." },
+        { value: "c", label: "Only government entities can deposit money." },
+        { value: "d", label: "Only large corporations can deposit money." }
       ],
       answer: "b"
     },
     {
-      question: "A foreign bank operating in Mumbai and Kolkata needs to deposit with RBI a minimum amount (under Section 11(2) BR Act) of:",
+      question: "What is the primary purpose of Know Your Customer (KYC) norms issued by the RBI?",
       options: [
-        { value: "a", label: "Rs. 5 lakh" },
-        { value: "b", label: "Rs. 10 lakh" },
-        { value: "c", label: "Rs. 15 lakh" },
-        { value: "d", label: "Rs. 20 lakh" }
+        { value: "a", label: "To assess the creditworthiness of borrowers" },
+        { value: "b", label: "To determine interest rates on deposits" },
+        { value: "c", label: "To protect banks from fraud, monitor suspicious transactions, and combat money laundering/terrorism financing" },
+        { value: "d", label: "To standardize branch timings across banks" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Which section of the Banking Regulation Act restricts entities other than banks (and specified exceptions) from accepting deposits withdrawable by cheque?",
+      options: [
+        { value: "a", label: "Section 5(b)" },
+        { value: "b", label: "Section 8" },
+        { value: "c", label: "Section 22" },
+        { value: "d", label: "Section 49A" }
       ],
       answer: "d"
     },
     {
-      question: "In addition to the initial deposit
+      question: "Under Section 7 of the BR Act, what word must every banking company use as part of its name?",
+      options: [
+        { value: "a", label: "Corporation" },
+        { value: "b", label: "Finance" },
+        { value: "c", label: "Bank" },
+        { value: "d", label: "Limited" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Which of the following activities is generally considered a 'Prohibited Business' for a banking company under Section 8 of the BR Act?",
+      options: [
+        { value: "a", label: "Lending or advancing money" },
+        { value: "b", label: "Directly or indirectly engaging in trading activities (buying/selling goods)" },
+        { value: "c", label: "Dealing in Bills of Exchange" },
+        { value: "d", label: "Transacting guarantee business" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Can a bank realize securities given to it for a loan if the borrower defaults, even though trading is generally prohibited?",
+      options: [
+        { value: "a", label: "No, trading is strictly prohibited under all circumstances." },
+        { value: "b", label: "Yes, realizing securities held for a loan is permitted and not considered prohibited trading under Section 8." },
+        { value: "c", label: "Only if the securities are government bonds." },
+        { value: "d", label: "Only with prior approval from the High Court." }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Section 9 of the BR Act deals with the disposal of non-banking assets. What is the maximum period a banking company can generally hold immovable property acquired (unless required for own use), without extension from RBI?",
+      options: [
+        { value: "a", label: "3 years" },
+        { value: "b", label: "5 years" },
+        { value: "c", label: "7 years" },
+        { value: "d", label: "10 years" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Which of the following is NOT a category under which banks in India fall, based on their constitution?",
+      options: [
+        { value: "a", label: "Body corporate constituted under a special statute" },
+        { value: "b", label: "Company registered under the Companies Act" },
+        { value: "c", label: "Partnership firm" },
+        { value: "d", label: "Co-operative society registered under a Central or State enactment" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "The State Bank of India (SBI) was constituted under which Act?",
+      options: [
+        { value: "a", label: "The Banking Regulation Act, 1949" },
+        { value: "b", label: "The Reserve Bank of India Act, 1934" },
+        { value: "c", label: "The State Bank of India Act, 1955" },
+        { value: "d", label: "The Companies Act, 1956" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Regional Rural Banks (RRBs) were constituted under which Act?",
+      options: [
+        { value: "a", label: "The State Bank (Subsidiary Banks) Act, 1959" },
+        { value: "b", label: "The Banking Companies (Acquisition and Transfer of Undertakings) Act, 1970" },
+        { value: "c", label: "The Regional Rural Banks Act, 1976" },
+        { value: "d", label: "The Multi State Cooperative Societies Act, 2002" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "How are most Private Sector Banks (including Small Finance Banks) constituted in India?",
+      options: [
+        { value: "a", label: "Under special statutes" },
+        { value: "b", label: "As companies under the Companies Act (1956 or 2013)" },
+        { value: "c", label: "As cooperative societies" },
+        { value: "d", label: "Under the RBI Act, 1934" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "What was one of the main objectives of the Co-operative Societies Act, 1904, marking the beginning of cooperative banking in India?",
+      options: [
+        { value: "a", label: "To compete with foreign banks" },
+        { value: "b", label: "To encourage thrift, self-help, and cooperation among agriculturists, artisans, etc." },
+        { value: "c", label: "To regulate large industrial lending" },
+        { value: "d", label: "To manage government treasuries" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "If a co-operative bank operates in more than one state, which Act generally applies?",
+      options: [
+        { value: "a", label: "The respective State Co-operative Societies Act only" },
+        { value: "b", label: "The Banking Regulation Act, 1949 only" },
+        { value: "c", label: "The Multi State Cooperative Societies Act" },
+        { value: "d", label: "The Reserve Bank of India Act, 1934 only" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Which legislation extended certain provisions of the BR Act and RBI Act to the Co-operative banking sector in 1965?",
+      options: [
+        { value: "a", label: "The Regional Rural Banks Act, 1976" },
+        { value: "b", label: "The Banking Laws (Application to Co-operative Societies) Act, 1965" },
+        { value: "c", label: "The Banking Regulation (Amendment) Act, 2020" },
+        { value: "d", label: "The Companies Act, 1956" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "What significant event led to the Banking Regulation (Amendment) Act, 2020, increasing RBI's regulatory powers over Co-operative Banks?",
+      options: [
+        { value: "a", label: "The merger of SBI associate banks" },
+        { value: "b", label: "The global financial crisis of 2008" },
+        { value: "c", label: "The failure of the PMC Bank" },
+        { value: "d", label: "The introduction of UPI" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "The Reserve Bank of India Act, 1934, deals primarily with the constitution, powers, and functions of:",
+      options: [
+        { value: "a", label: "All commercial banks" },
+        { value: "b", label: "Co-operative banks only" },
+        { value: "c", label: "The Reserve Bank of India (RBI)" },
+        { value: "d", label: "Non-Banking Financial Companies (NBFCs)" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Under the RBI Act, 1934, a 'Scheduled Bank' is one included in the:",
+      options: [
+        { value: "a", label: "First Schedule of the Act" },
+        { value: "b", label: "Second Schedule of the Act" },
+        { value: "c", label: "Third Schedule of the Banking Regulation Act" },
+        { value: "d", label: "List maintained by the Ministry of Finance" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Which section of the RBI Act deals with the requirement for Scheduled Banks to maintain Cash Reserves with the RBI?",
+      options: [
+        { value: "a", label: "Section 17" },
+        { value: "b", label: "Section 18" },
+        { value: "c", label: "Section 22" },
+        { value: "d", label: "Section 42" }
+      ],
+      answer: "d"
+    },
+    {
+      question: "The Finance (No. 2) Act 2019 amended the RBI Act 1934 concerning NBFCs. What was a major change regarding Net Owned Funds (NOF)?",
+      options: [
+        { value: "a", label: "The limit was decreased from Rs. 2 crores." },
+        { value: "b", label: "The limit was enhanced (with power to notify up to Rs. 100 crores) from the earlier Rs. 2 crores limit." },
+        { value: "c", label: "The concept of NOF was removed for NBFCs." },
+        { value: "d", label: "The limit was fixed uniformly at Rs. 50 crores for all NBFCs." }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Newly inserted sections 45-ID and 45-IE in the RBI Act give RBI powers to control the management of a regulated NBFC by:",
+      options: [
+        { value: "a", label: "Fixing interest rates charged by the NBFC" },
+        { value: "b", label: "Replacing directors or superseding its board" },
+        { value: "c", label: "Mandating specific lending sectors" },
+        { value: "d", label: "Auditing their overseas operations only" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "The Banking Regulation Act, 1949, initially applied only to:",
+      options: [
+        { value: "a", label: "Co-operative Banks" },
+        { value: "b", label: "State Bank of India" },
+        { value: "c", label: "Banking Companies" },
+        { value: "d", label: "Regional Rural Banks" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "The Banking Regulation (Amendment) Act, 2020, made the BR Act inapplicable to which entities if they don't use 'bank', 'banker', or 'banking' in their name/business and don't act as drawee of cheques?",
+      options: [
+        { value: "a", label: "All NBFCs" },
+        { value: "b", label: "Primary agricultural credit societies and certain long-term agricultural finance co-operative societies" },
+        { value: "c", label: "All Payments Banks" },
+        { value: "d", label: "Foreign Banks operating in India" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Which sections were inserted by the Banking Regulation (Amendment) Act, 2017, authorizing RBI to direct banks to initiate the insolvency resolution process under the IBC, 2016?",
+      options: [
+        { value: "a", label: "Sections 21A and 22" },
+        { value: "b", label: "Sections 35AA and 35AB" },
+        { value: "c", label: "Sections 45Y and 45Z" },
+        { value: "d", label: "Sections 51 and 56" }
+      ],
+      answer: "b"
+    },
+    {
+      question: "Who appoints the Governor and Deputy Governors of the Reserve Bank of India?",
+      options: [
+        { value: "a", label: "The Chief Justice of India" },
+        { value: "b", label: "The Parliament of India" },
+        { value: "c", label: "The Government of India (Central Government)" },
+        { value: "d", label: "The Board of Directors of the RBI" }
+      ],
+      answer: "c"
+    },
+    {
+      question: "Under Section 7(1) of the RBI Act, the Government of India can give directions to the RBI on matters of public interest after consultation with:",
+      options: [
+        { value: "a", label: "The Parliament" },
+        { value: "b", label: "The Chief Economic Advisor" },
+        { value: "c", label: "The Governor of the RBI" },
+        { value: "d", label: "The Supreme Court" }
+      ],
+      answer: "c"
+    }
+  ]
+};

@@ -6,10 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { toast } from "@/hooks/use-toast";
+import QuizModal from '@/components/jaiib/QuizModal';
+import { useQuiz } from '@/hooks/jaiib/useQuiz';
+import { quizQuestions } from '@/data/jaiib/quizQuestions';
 
 const BankingRegulations = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('module-a');
+  const quiz = useQuiz({ quizQuestions });
   
   const modules = [
     {
@@ -65,8 +70,17 @@ const BankingRegulations = () => {
   const handleStartQuiz = (moduleId: string, chapterIndex: number) => {
     const chapter = modules.find(m => m.id === moduleId)?.chapters[chapterIndex];
     console.log(`Starting quiz for ${moduleId}, Chapter: ${chapter}`);
-    // In a real app, we would navigate to the quiz page
-    // navigate(`/caiib/banking-regulations/${moduleId}/quiz/${chapterIndex}`);
+    
+    if (quizQuestions[chapter as keyof typeof quizQuestions]) {
+      quiz.handleStartQuiz(moduleId, chapterIndex);
+    } else {
+      toast({
+        title: "Quiz Not Available",
+        description: `Quiz for "${chapter}" is coming soon!`,
+        variant: "destructive"
+      });
+      console.log(`Quiz for ${chapter} not available yet`);
+    }
   };
 
   return (
@@ -124,13 +138,14 @@ const BankingRegulations = () => {
                             <div>
                               <h3 className="font-semibold">{chapter}</h3>
                               <Badge variant="outline" className="text-xs mt-1 bg-white/10">
-                                30 questions
+                                {chapter === 'RBI Act, Banking Regulation Act' ? '30 questions' : 'Coming soon'}
                               </Badge>
                             </div>
                           </div>
                           <Button 
                             onClick={() => handleStartQuiz(module.id, index)}
                             className="whitespace-nowrap"
+                            disabled={chapter !== 'RBI Act, Banking Regulation Act'}
                           >
                             Start Quiz
                           </Button>
@@ -144,6 +159,29 @@ const BankingRegulations = () => {
           ))}
         </Tabs>
       </div>
+      
+      <QuizModal
+        quizOpen={quiz.quizOpen}
+        setQuizOpen={quiz.setQuizOpen}
+        handleCloseQuiz={quiz.handleCloseQuiz}
+        currentChapter={quiz.currentChapter}
+        timeRemaining={quiz.timeRemaining}
+        timerActive={quiz.timerActive}
+        showResults={quiz.showResults}
+        quizSubmitted={quiz.quizSubmitted}
+        score={quiz.score}
+        totalQuestions={quiz.totalQuestions}
+        currentQuestionIndex={quiz.currentQuestionIndex}
+        progressPercentage={quiz.progressPercentage}
+        currentQuestion={quiz.currentQuestion}
+        selectedAnswers={quiz.selectedAnswers}
+        handleAnswerSelect={quiz.handleAnswerSelect}
+        handleNextQuestion={quiz.handleNextQuestion}
+        handleSubmitQuiz={quiz.handleSubmitQuiz}
+        handleSkipQuestion={quiz.handleSkipQuestion}
+        handleRetryQuiz={quiz.handleRetryQuiz}
+        quizQuestions={quizQuestions}
+      />
     </div>
   );
 };
